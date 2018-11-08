@@ -1,0 +1,41 @@
+products:
+   src/main/scala/com/dk/Factorial.scala -> build/classes/scala/main/com/dk/Factorial$.class
+   src/main/scala/com/dk/Factorial.scala -> build/classes/scala/main/com/dk/Factorial$delayedInit$body.class
+   src/main/scala/com/dk/Factorial.scala -> build/classes/scala/main/com/dk/Factorial.class
+   src/main/scala/com/dk/Permutations.scala -> build/classes/scala/main/com/dk/Permutations$.class
+   src/main/scala/com/dk/Permutations.scala -> build/classes/scala/main/com/dk/Permutations$delayedInit$body.class
+   src/main/scala/com/dk/Permutations.scala -> build/classes/scala/main/com/dk/Permutations.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/FlatMap$.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/FlatMap.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/Return$.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/Return.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/Suspend$.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/Suspend.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/Trampoline$.class
+   src/main/scala/com/dk/Trampoline.scala -> build/classes/scala/main/com/dk/Trampoline.class
+binary dependencies:
+   src/main/scala/com/dk/Factorial.scala -> /home/daniel/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-library/2.12.6/6bd975dd5ca2a50b94413b708389b892ae423181/scala-library-2.12.6.jar
+   src/main/scala/com/dk/Factorial.scala -> /usr/lib/jvm/java-8-oracle/jre/lib/rt.jar
+   src/main/scala/com/dk/Permutations.scala -> /home/daniel/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-library/2.12.6/6bd975dd5ca2a50b94413b708389b892ae423181/scala-library-2.12.6.jar
+   src/main/scala/com/dk/Permutations.scala -> /usr/lib/jvm/java-8-oracle/jre/lib/rt.jar
+   src/main/scala/com/dk/Trampoline.scala -> /home/daniel/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-library/2.12.6/6bd975dd5ca2a50b94413b708389b892ae423181/scala-library-2.12.6.jar
+   src/main/scala/com/dk/Trampoline.scala -> /usr/lib/jvm/java-8-oracle/jre/lib/rt.jar
+source dependencies:
+   src/main/scala/com/dk/Factorial.scala -> src/main/scala/com/dk/Trampoline.scala
+   src/main/scala/com/dk/Permutations.scala -> src/main/scala/com/dk/Trampoline.scala
+external dependencies:
+class names:
+   src/main/scala/com/dk/Factorial.scala -> com.dk.Factorial
+   src/main/scala/com/dk/Factorial.scala -> com.dk.Factorial$
+   src/main/scala/com/dk/Factorial.scala -> com.dk.Factorial$delayedInit$body
+   src/main/scala/com/dk/Permutations.scala -> com.dk.Permutations
+   src/main/scala/com/dk/Permutations.scala -> com.dk.Permutations$
+   src/main/scala/com/dk/Permutations.scala -> com.dk.Permutations$delayedInit$body
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.FlatMap
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.FlatMap$
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.Return
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.Return$
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.Suspend
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.Suspend$
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.Trampoline
+   src/main/scala/com/dk/Trampoline.scala -> com.dk.Trampoline$

@@ -19,4 +19,5 @@ logback-test.xml
 integration-tests/src/test/resources/application.conf
 libsigar-universal64-macosx.dylib
 out/
-
+.gradle/
+build/
