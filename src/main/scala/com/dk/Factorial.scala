@@ -11,10 +11,13 @@ object Factorial extends App {
     if (n == 0) 1
     else n * unsafeFac(n - 1)
 
-
-  val i =9000000
-  println(Trampoline.run(fac(i)))
-  println(unsafeFac(i))
+  val i = 9000000
+  //println(Trampoline.run(fac(i)))
+  try {
+    println(unsafeFac(i))
+  } catch {
+    case e: StackOverflowError => println("hi " + e.getStackTrace.length)
+  }
 }
 
 

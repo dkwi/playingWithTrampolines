@@ -30,9 +30,11 @@ object Permutations extends App {
     val seqSize = seq.size
 
     def loop(seq: Seq[A], size: Int): Seq[Seq[A]] = {
-      def allInserts(x: A, ll: Seq[Seq[A]]): Seq[Seq[A]] = ll match {
-        case hd :: tl ⇒ inserts(x, hd) ++: allInserts(x, tl)
-        case _ ⇒ Nil
+      def allInserts(x: A, ll: Seq[Seq[A]]): Seq[Seq[A]] = {
+        ll match {
+          case hd :: tl ⇒ inserts(x, hd) ++: allInserts(x, tl)
+          case _ ⇒ Nil
+        }
       }
 
       def inserts(x: A, ll: Seq[A]): Seq[Seq[A]] =
@@ -57,12 +59,14 @@ object Permutations extends App {
     val seqSize = seq.size
 
     def loop(seq: Seq[A], size: Int): Trampoline[Seq[Seq[A]]] = {
-      def allInserts(x: A, ll: Seq[Seq[A]]): Trampoline[Seq[Seq[A]]] = ll match {
-        case hd :: tl ⇒
-          Suspend(() ⇒ allInserts(x, tl))
-            .flatMap(all ⇒ Return(inserts(x, hd) ++: all))
+      def allInserts(x: A, ll: Seq[Seq[A]]): Trampoline[Seq[Seq[A]]] = {
+        ll match {
+          case hd :: tl ⇒
+            Suspend(() ⇒ allInserts(x, tl))
+              .flatMap(all ⇒ Return(inserts(x, hd) ++: all))
 
-        case _ ⇒ Return(Nil)
+          case _ ⇒ Return(Nil)
+        }
       }
 
       def inserts(x: A, ll: Seq[A]): Seq[Seq[A]] =
@@ -74,10 +78,12 @@ object Permutations extends App {
       seq match {
         case _ if size > seqSize ⇒ Return(Nil)
         case _ :: _ if size == 1 ⇒ Return(seq.map(Seq(_)))
-        case hd :: tl ⇒ Suspend(() ⇒ loop(tl, size - 1))
-          .flatMap(subList ⇒ Suspend(() ⇒ loop(tl, size))
-            .flatMap(acc ⇒ allInserts(hd, subList)
-              .flatMap(all ⇒ Return(all ++ acc))))
+        case hd :: tl ⇒
+          for {
+            subList <- Suspend(() ⇒ loop(tl, size - 1))
+            acc <- Suspend(() ⇒ loop(tl, size))
+            all <- allInserts(hd, subList)
+          } yield all ++ acc
         case _ ⇒ Return(Nil)
       }
     }
@@ -88,19 +94,21 @@ object Permutations extends App {
   def simple[A](seq: Seq[A], size: Int): Seq[Seq[A]] = seq.combinations(size).flatMap(_.permutations).toList
 
   private def runAll[A](seq: Seq[A], i: Int)(ops: ((Seq[A], Int) ⇒ Seq[Seq[A]])*): Unit = {
-    val res = ops map { op ⇒ time(op(seq, i)) }
+    try {
+      val res = ops map { op ⇒ time(op(seq, i)) }
 
-    val meta = res map { case (t, s) ⇒ t -> s.size }
+      val meta = res map { case (t, s) ⇒ t -> s.size }
+      println(meta.map(a ⇒ s"${a._1}, ${a._2}").mkString(" , "))
 
-    println(meta.map(a ⇒ s"${a._1}, ${a._2}").mkString(" , "))
+      compareSeq(meta)((a, c) ⇒ c._2 == a._2).withFilter(!_._1).foreach(println(_))
 
-    compareSeq(meta)((a, c) ⇒ c._2 == a._2).withFilter(!_._1).foreach(println(_))
-
-    compareSeq(res) { (a, c) ⇒
-      a._2.forall(x => c._2.contains(x))
-      c._2.forall(x => a._2.contains(x))
-    } withFilter (!_._1) foreach (println(_))
-
+      compareSeq(res) { (a, c) ⇒
+        a._2.forall(x => c._2.contains(x))
+        c._2.forall(x => a._2.contains(x))
+      } withFilter (!_._1) foreach (println(_))
+    } catch {
+      case e: StackOverflowError ⇒ println(s"SOE: ${e.getStackTrace.length}")
+    }
   }
 
 
@@ -115,23 +123,26 @@ object Permutations extends App {
   }
 
   def time[A](block: ⇒ A): (Long, A) = {
-    val pre = System.nanoTime()
-    val b = block
-    val post = System.nanoTime()
-
-    (post - pre, b)
+    (1 to 100).map {
+      _ ⇒
+        val pre = System.nanoTime()
+        val b = block
+        val post = System.nanoTime()
+        (post - pre, b)
+    }.reduce((a, b) ⇒ (a._1 + b._1) -> a._2)
   }
 
-  // println(Ugly.getAllPermutation((1 to 8).toList.map(_.toString),3))
-
   for {
-    s <- 1 to 15
+    s <- 1 to 10
     j <- 1 to s
-  } runAll((1 to s).toList, j)(
-    simple,
-    perms,
-    (s, i) ⇒ Ugly.getAllPermutation(s.map(_.toString), i).toList.flatten.map(_.map(_.toInt)),
-    simple //unsafePerms(seq, i)
-  )
+  } {
+    print(s"$s, $j, ")
+    runAll((1 to s).toList, j)(
+      simple,
+      perms,
+      (s, i) ⇒ Ugly.getAllPermutation(s.map(_.toString), i).toList.flatten.map(_.map(_.toInt)),
+      unsafePerms
+    )
+  }
 }
 

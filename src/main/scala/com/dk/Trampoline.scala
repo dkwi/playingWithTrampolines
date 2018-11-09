@@ -1,6 +1,8 @@
 package com.dk
 
 sealed trait Trampoline[A] {
+  def map[B](f: A ⇒ B): Trampoline[B] = FlatMap(this, f andThen (Return(_)))
+
   def flatMap[B](f: A ⇒ Trampoline[B]): Trampoline[B] = FlatMap(this, f)
 }
 
