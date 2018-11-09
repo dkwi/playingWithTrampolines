@@ -4,8 +4,8 @@ object Permutations extends App {
 
   object Ugly {
 
-    def getAllPermutation(words: Seq[String], length: Int): Option[scala.collection.mutable.ArrayBuffer[Seq[String]]] = {
-      def printWordsPermutationRec(res: scala.collection.mutable.ArrayBuffer[Seq[String]], tempRes: Seq[String], words: Seq[String], length: Int): scala.collection.mutable.ArrayBuffer[Seq[String]] = {
+    def getAllPermutation[A](words: Seq[A], length: Int): Seq[Seq[A]] = {
+      def printWordsPermutationRec(res: scala.collection.mutable.ArrayBuffer[Seq[A]], tempRes: Seq[A], words: Seq[A], length: Int): scala.collection.mutable.ArrayBuffer[Seq[A]] = {
         length match {
           case 0 => res += tempRes
           case _ => for (word <- words) {
@@ -17,11 +17,11 @@ object Permutations extends App {
       }
 
       if (words.lengthCompare(length) < 0 || length < 0)
-        None
+        Seq()
       else {
-        val s = scala.collection.mutable.ArrayBuffer[Seq[String]]()
-        val f = Seq[String]()
-        Some(printWordsPermutationRec(s, f, words, length))
+        val s = scala.collection.mutable.ArrayBuffer[Seq[A]]()
+        val f = Seq()
+        printWordsPermutationRec(s, f, words, length)
       }
     }
   }
@@ -140,7 +140,7 @@ object Permutations extends App {
     runAll((1 to s).toList, j)(
       simple,
       perms,
-      (s, i) ⇒ Ugly.getAllPermutation(s.map(_.toString), i).toList.flatten.map(_.map(_.toInt)),
+      Ugly.getAllPermutation,
       unsafePerms
     )
   }
