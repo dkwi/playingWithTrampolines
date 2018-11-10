@@ -45,7 +45,7 @@ object Permutations extends App {
 
       seq match {
         case _ if size > seqSize ⇒ Nil
-        case _ :: _ if size == 1 ⇒ seq.map(Seq(_))
+        case _ if size == 1 ⇒ seq.map(Seq(_))
         case hd :: tl ⇒ allInserts(hd, loop(tl, size - 1)) ++ loop(tl, size)
         case _ ⇒ Nil
       }
@@ -77,7 +77,7 @@ object Permutations extends App {
 
       seq match {
         case _ if size > seqSize ⇒ Return(Nil)
-        case _ :: _ if size == 1 ⇒ Return(seq.map(Seq(_)))
+        case _ if size == 1 ⇒ Return(seq.map(Seq(_)))
         case hd :: tl ⇒
           for {
             subList <- Suspend(() ⇒ loop(tl, size - 1))
@@ -93,7 +93,9 @@ object Permutations extends App {
 
   def simple[A](seq: Seq[A], size: Int): Seq[Seq[A]] = seq.combinations(size).flatMap(_.permutations).toList
 
-  private def runAll[A](seq: Seq[A], i: Int)(ops: ((Seq[A], Int) ⇒ Seq[Seq[A]])*): Unit = {
+  type Ops[A] = (Seq[A], Int) ⇒ Seq[Seq[A]]
+
+  private def runAll[A](seq: Seq[A], i: Int)(ops: Ops[A]*): Unit = {
     val res = ops map { op ⇒
       try {
         time(op(seq, i))
