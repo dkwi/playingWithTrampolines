@@ -94,21 +94,25 @@ object Permutations extends App {
   def simple[A](seq: Seq[A], size: Int): Seq[Seq[A]] = seq.combinations(size).flatMap(_.permutations).toList
 
   private def runAll[A](seq: Seq[A], i: Int)(ops: ((Seq[A], Int) ⇒ Seq[Seq[A]])*): Unit = {
-    try {
-      val res = ops map { op ⇒ time(op(seq, i)) }
-
-      val meta = res map { case (t, s) ⇒ t -> s.size }
-      println(meta.map(a ⇒ s"${a._1}, ${a._2}").mkString(" , "))
-
-      compareSeq(meta)((a, c) ⇒ c._2 == a._2).withFilter(!_._1).foreach(println(_))
-
-      compareSeq(res) { (a, c) ⇒
-        a._2.forall(x => c._2.contains(x))
-        c._2.forall(x => a._2.contains(x))
-      } withFilter (!_._1) foreach (println(_))
-    } catch {
-      case e: StackOverflowError ⇒ println(s"SOE: ${e.getStackTrace.length}")
+    val res = ops map { op ⇒
+      try {
+        time(op(seq, i))
+      } catch {
+        case e: StackOverflowError ⇒
+          println(s"SOE: ${e.getStackTrace.length}")
+          (-1, Nil)
+      }
     }
+
+    val meta = res map { case (t, s) ⇒ t -> s.size }
+    println(meta.map(a ⇒ s"${a._1}, ${a._2}").mkString(" , "))
+
+    compareSeq(meta)((a, c) ⇒ c._2 == a._2).withFilter(!_._1).foreach(println(_))
+
+    compareSeq(res) { (a, c) ⇒
+      a._2.forall(x => c._2.contains(x))
+      c._2.forall(x => a._2.contains(x))
+    } withFilter (!_._1) foreach (println(_))
   }
 
 
@@ -123,13 +127,16 @@ object Permutations extends App {
   }
 
   def time[A](block: ⇒ A): (Long, A) = {
-    (1 to 100).map {
-      _ ⇒
-        val pre = System.nanoTime()
-        val b = block
-        val post = System.nanoTime()
-        (post - pre, b)
-    }.reduce((a, b) ⇒ (a._1 + b._1) -> a._2)
+    def itr(ret: Boolean): (Long, Option[A]) = {
+      val pre = System.nanoTime()
+      val b = block
+      val post = System.nanoTime()
+      (post - pre, if (ret) Some(b) else None)
+    }
+
+    val times = (1 to 100).map { _ ⇒ itr(false)._1 }.sum
+    val out = itr(true)
+    (out._1 + times) -> out._2.get
   }
 
   for {
